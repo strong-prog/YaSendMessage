@@ -8,6 +8,7 @@ import time
 import datetime
 
 
+# Заполнение формы и вход в аккаунт.
 def input_account(brow, name, password, num):
     button = WebDriverWait(brow, 5).until(
          ex.presence_of_element_located((By.CSS_SELECTOR, '.Button2')))
@@ -36,6 +37,7 @@ def input_account(brow, name, password, num):
     print('Авторизация успешна.')
 
 
+# Отправка сообщения о принятом задании.
 def send_message(pay):
     token = '...'
     bot = telebot.TeleBot(token)
@@ -44,6 +46,7 @@ def send_message(pay):
     bot.send_message(chat_id, text)
     
 
+# Поиск задачи по определенной стоимости, принятии её в работу и отправки уведомления.
 def get_task(brow):
     try:
         get_snippets = WebDriverWait(brow, 2).until(
@@ -55,7 +58,7 @@ def get_task(brow):
     if get_snippets:
         for snippet in get_snippets:
             payment = int(float(snippet.find_element(By.CSS_SELECTOR, '.informer-field__value').text.replace(',', '.')))
-            if payment >= 100:
+            if payment >= MIN_PRICE:
                 dict_snippets[payment] = snippet
         if dict_snippets:
             max_key = max(dict_snippets.keys())
@@ -76,9 +79,12 @@ def time_t():
     return today.strftime("%H:%M:%S")
 
 
+# Основной алгоритм запуска парсера и завершения работы при успешном принятии задачи.
 user_name = '...'
 user_pass = '...'
 user_num = '...'
+
+MIN_PRICE = 100
 
 options = webdriver.FirefoxOptions()
 options.add_argument('-headless')
